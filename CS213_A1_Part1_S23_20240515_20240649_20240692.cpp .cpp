@@ -140,6 +140,19 @@ public:
         }
         image = out;
     }
+    // Filter #7
+    void ChangeBrightness(int n) {
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < 3; ++k) {
+                    int x = image(i,j,k) + n;
+                    if (x > 255)x = 255;
+                    if (x < 0)x = 0;
+                    image(i,j,k) = x;
+                }
+            }
+        }
+    }
 
     void saveImage(const string &outName) {
         image.saveImage(outName);
@@ -165,7 +178,8 @@ int main() {
         "5. Flip vertically",
         "6. Flip horizontally",
         "7. Rotate image",
-        "8. Exit"
+        "8.Change Brightness",
+        "9. Exit"
     };
 
     int choice;
@@ -175,7 +189,7 @@ int main() {
         cout << "Choose a filter number: ";
         cin >> choice;
 
-        if (choice == 8) { // Exit
+        if (choice == 9) { // Exit
             cout << "Exiting...\n";
             break;
         }
@@ -199,6 +213,12 @@ int main() {
                 cin >> angle;
                 p.rotate(angle);
                 break;
+            }
+            case 8: {
+                int x;
+                cout << "1.darker\n2.lighter";
+                cin >> x;
+                (x == 1) ? p.ChangeBrightness(-127) : p.ChangeBrightness(127);
             }
             default:
                 cout << "Invalid choice\n";
