@@ -154,6 +154,39 @@ public:
         }
     }
 
+    // Filter #10
+    void detectEdges() {
+        Image gray = image;
+        for (int i = 0; i < gray.width; ++i) {
+            for (int j = 0; j < gray.height; ++j) {
+                unsigned int avg = 0;
+                for (int k = 0; k < gray.channels; ++k)
+                    avg += gray(i, j, k);
+                avg /= gray.channels;
+                for (int k = 0; k < gray.channels; ++k)
+                    gray(i, j, k) = avg;
+            }
+        }
+        Image edges(gray.width, gray.height);
+        for (int i = 1; i < gray.width - 1; ++i) {
+            for (int j = 1; j < gray.height - 1; ++j) {
+                int gx = 0, gy = 0;
+
+                // تدرج أفقي (difference in x)
+                gx = abs(gray(i+1, j, 0) - gray(i-1, j, 0));
+
+                // تدرج رأسي (difference in y)
+                gy = abs(gray(i, j+1, 0) - gray(i, j-1, 0));
+
+                int edgeVal = min(255, gx + gy); // إجمالي الفرق
+                for (int c = 0; c < gray.channels; ++c)
+                    edges(i, j, c) = edgeVal;
+            }
+        }
+
+        image = edges;
+    }
+
     void saveImage(const string &outName) {
         image.saveImage(outName);
     }
@@ -179,7 +212,8 @@ int main() {
         "6. Flip horizontally",
         "7. Rotate image",
         "8.Change Brightness",
-        "9. Exit"
+        "9. Detect Edges",
+        "12. Exit"
     };
 
     int choice;
@@ -189,7 +223,7 @@ int main() {
         cout << "Choose a filter number: ";
         cin >> choice;
 
-        if (choice == 9) { // Exit
+        if (choice == 12) { // Exit
             cout << "Exiting...\n";
             break;
         }
@@ -220,6 +254,7 @@ int main() {
                 cin >> x;
                 (x == 1) ? p.ChangeBrightness(-127) : p.ChangeBrightness(127);
             }
+            case 9: p.detectEdges(); break;
             default:
                 cout << "Invalid choice\n";
                 continue;
