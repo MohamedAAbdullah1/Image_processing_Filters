@@ -210,6 +210,23 @@ public:
 
         image = edges;
     }
+    // Filter #11 — Resize image
+    void resizeImage() {
+        int newWidth, newHeight;
+        cout << "Enter new width and height: ";
+        cin >> newWidth >> newHeight;
+
+        Image resized(newWidth, newHeight);
+        for (int i = 0; i < newWidth; i++) {
+            for (int j = 0; j < newHeight; j++) {
+                int oldX = i * image.width / newWidth;
+                int oldY = j * image.height / newHeight;
+                for (int k = 0; k < image.channels; k++)
+                    resized(i, j, k) = image(oldX, oldY, k);
+            }
+        }
+        image = resized;
+    }
 
     void saveImage(const string &outName) {
         image.saveImage(outName);
@@ -238,6 +255,7 @@ int main() {
         "8.Change Brightness",
         "9. Crop image",
         "10. Detect Edges",
+        "11.Resize image",
         "12. Exit"
     };
 
@@ -284,6 +302,7 @@ int main() {
             default:
                 cout << "Invalid choice\n";
                 continue;
+            case 11:p.resizeImage();break;
         }
 
         string outFile;
