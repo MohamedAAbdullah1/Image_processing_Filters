@@ -3,7 +3,7 @@
   ID          |        Name                  | Filter no. | Section
 ---------------------------------------------------------------------------
   20240515    | Mohamed Abdullah Abdul-Hafez | 1 - 4 - 7  | All-B
-  20240649    | Hisham Mohamed Fathy         | 2 - 5      | 23
+  20240649    | Hisham Mohamed Fathy         | 2 - 5 - 8  | 23
   20240692    | Youssef Sayed Ali            | 3 - 6      | 23
 ============================================================================
 */
@@ -153,6 +153,30 @@ public:
             }
         }
     }
+    // Filter #8
+    void cropImage() {
+        int x, y, width, height;
+        cout << "Enter crop start X: "; cin >> x;
+        cout << "Enter crop start Y: "; cin >> y;
+        cout << "Enter crop width: "; cin >> width;
+        cout << "Enter crop height: "; cin >> height;
+
+        if (x + width > image.width || y + height > image.height) {
+            cout << "Error: crop area exceeds image bounds!" << endl;
+            return;
+        }
+
+        Image cropped(width, height);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                for (int k = 0; k < image.channels; k++) {
+                    cropped(i, j, k) = image(i + x, j + y, k);
+                }
+            }
+        }
+        image = cropped;
+    }
+
 
     // Filter #10
     void detectEdges() {
@@ -212,7 +236,8 @@ int main() {
         "6. Flip horizontally",
         "7. Rotate image",
         "8.Change Brightness",
-        "9. Detect Edges",
+        "9. Crop image",
+        "10. Detect Edges",
         "12. Exit"
     };
 
@@ -254,7 +279,8 @@ int main() {
                 cin >> x;
                 (x == 1) ? p.ChangeBrightness(-127) : p.ChangeBrightness(127);
             }
-            case 9: p.detectEdges(); break;
+            case 9:p.cropImage();break;
+            case 10: p.detectEdges(); break;
             default:
                 cout << "Invalid choice\n";
                 continue;
