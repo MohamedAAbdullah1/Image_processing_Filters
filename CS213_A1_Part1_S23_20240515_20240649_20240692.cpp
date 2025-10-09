@@ -18,6 +18,7 @@ using namespace std;
 class ImageProcessor {
 public:
     ImageProcessor(const string &filename) : image(filename) {}
+
     //Filter #1
     void convertToGrayscale() {
         for (int i = 0; i < image.width; ++i) {
@@ -38,11 +39,9 @@ public:
             for (int j = 0; j < image.height; ++j) {
                 unsigned int avg = 0;
                 for (int k = 0; k < image.channels; ++k) avg += image(i, j, k);
-                avg /= image.channels;
-                unsigned char val = (avg > 128) ? 255 : 0;
-                for (int k = 0; k < image.channels; ++k) {
-                    image(i, j, k) = val;
-                }
+                avg /= 3;
+                unsigned int val = (avg > 128) ? 255 : 0;
+                for (int k = 0; k < image.channels; ++k) image(i, j, k) = val;
             }
         }
     }
@@ -51,8 +50,8 @@ public:
     void invertColors() {
         for (int i = 0; i < image.width; i++){
             for (int j = 0; j < image.height; j++) {
-                for (int c = 0; c < image.channels; c++) {
-                    image(i, j, c) = 255 - image(i, j, c);
+                for (int k = 0; k < image.channels; k++) {
+                    image(i, j, k) = 255 - image(i, j, k);
                 }
             }
         }
@@ -87,7 +86,7 @@ public:
             for (int i = 0; i < image.width; ++i) {
                 for (int k = 0; k < image.channels; ++k) {
                     int oppositeY = image.height - 1 - j;
-                    unsigned char temp = image(i, j, k);
+                    unsigned int temp = image(i, j, k);
                     image(i, j, k) = image(i, oppositeY, k);
                     image(i, oppositeY, k) = temp;
                 }
@@ -177,27 +176,14 @@ public:
         image = cropped;
     }
     // Filter #9
-    void addFrame(int thickness, string type, int r = 0, int g = 0, int b = 0) {
+    void addFrame(int thickness, int r = 0, int g = 0, int b = 0) {
         for (int i = 0; i < image.width; i++)
             for (int j = 0; j < image.height; j++) {
                 bool border = (i < thickness || j < thickness || i >= image.width - thickness || j >= image.height - thickness);
                 if (border) {
-                    if (type == "normal") {
-                        image(i, j, 0) = r;
-                        image(i, j, 1) = g;
-                        image(i, j, 2) = b;
-                    } else if (type == "decorative") {
-                        int pattern = ((i / 10) + (j / 10)) % 2;
-                        if (pattern == 0) {
-                            image(i, j, 0) = 255;
-                            image(i, j, 1) = 215;
-                            image(i, j, 2) = 0;
-                        } else {
-                            image(i, j, 0) = 139;
-                            image(i, j, 1) = 69;
-                            image(i, j, 2) = 19;
-                        }
-                    }
+                    image(i, j, 0) = r;
+                    image(i, j, 1) = g;
+                    image(i, j, 2) = b;
                 }
             }
     }
@@ -345,19 +331,14 @@ int main() {
             case 8:p.cropImage();break;
             case 9:{
                 cout << "Enter the thickness:";int x;cin >> x;
-                cout << "1.Normal\n2.decorative\nEnter the type: ";
-                int y;cin >> y;
-                if (y == 1) {
-                    cout<<"Enter the color: ";
-                    int r, g, b;cin >> r >> g >> b;
-                    p.addFrame(x,"normal",r,g,b);
-                }else
-                    p.addFrame(x,"decorative");
+                cout<<"Enter the color: ";
+                int r, g, b;cin >> r >> g >> b;
+                p.addFrame(x,r,g,b);
                 break;
             }
             case 10: p.detectEdges(); break;
-            case 11:p.resizeImage();break;
-            case 12:p.blurimages(); break;
+            case 11: p.resizeImage();break;
+            case 12: p.blurimages(); break;
             default:
                 cout << "Invalid choice\n";
                 continue;
