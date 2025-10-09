@@ -218,7 +218,7 @@ public:
         }
         image = edges;
     }
-    // Filter #11 — Resize image
+    // Filter #11
     void resizeImage() {
         int newWidth, newHeight;
         cout << "Enter new width and height: ";
@@ -235,7 +235,7 @@ public:
         }
         image = resized;
     }
-    // Filter #13
+    // Filter #12
     void blurimages() {
         int blockSize;
         cin>>blockSize;
@@ -348,6 +348,7 @@ int main() {
                 cout << "1.Normal\n2.decorative\nEnter the type: ";
                 int y;cin >> y;
                 if (y == 1) {
+                    cout<<"Enter the color: ";
                     int r, g, b;cin >> r >> g >> b;
                     p.addFrame(x,"normal",r,g,b);
                 }else
