@@ -295,6 +295,7 @@ int main() {
         "9. Add frame",
         "10. Detect Edges",
         "11.Resize image",
+        "12.blur image",
         "13. Exit"
     };
 
@@ -354,10 +355,12 @@ int main() {
                 break;
             }
             case 10: p.detectEdges(); break;
+            case 11:p.resizeImage();break;
+            case 12:p.blurimages(); break;
             default:
                 cout << "Invalid choice\n";
                 continue;
-            case 11:p.resizeImage();break;
+
         }
 
         string outFile;
