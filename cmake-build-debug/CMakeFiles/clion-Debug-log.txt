@@ -1,0 +1,6 @@
+"C:\CLion 2024.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "MinGW Makefiles" -S C:\Users\Hema\Image_processing_Filters -B C:\Users\Hema\Image_processing_Filters\cmake-build-debug
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  CMake 4.0 or higher is required.  You are running version 3.30.5
+
+
+-- Configuring incomplete, errors occurred!
