@@ -4,7 +4,7 @@
 ---------------------------------------------------------------------------
   20240515    | Mohamed Abdullah Abdul-Hafez | 1 - 4 - 7 - 10 | All-B
   20240649    | Hisham Mohamed Fathy         | 2 - 5 - 8 - 11 | 35
-  20240692    | Youssef Sayed Ali            | 3 - 6          | 25
+  20240692    | Youssef Sayed Ali            | 3 - 6 - 9      | 25
 ============================================================================
 */
 
@@ -176,7 +176,31 @@ public:
         }
         image = cropped;
     }
-
+    // Filter #9
+    void addFrame(int thickness, string type, int r = 0, int g = 0, int b = 0) {
+        for (int i = 0; i < image.width; i++)
+            for (int j = 0; j < image.height; j++) {
+                bool border = (i < thickness || j < thickness || i >= image.width - thickness || j >= image.height - thickness);
+                if (border) {
+                    if (type == "normal") {
+                        image(i, j, 0) = r;
+                        image(i, j, 1) = g;
+                        image(i, j, 2) = b;
+                    } else if (type == "decorative") {
+                        int pattern = ((i / 10) + (j / 10)) % 2;
+                        if (pattern == 0) {
+                            image(i, j, 0) = 255;
+                            image(i, j, 1) = 215;
+                            image(i, j, 2) = 0;
+                        } else {
+                            image(i, j, 0) = 139;
+                            image(i, j, 1) = 69;
+                            image(i, j, 2) = 19;
+                        }
+                    }
+                }
+            }
+    }
 
     // Filter #10
     void detectEdges() {
@@ -196,13 +220,12 @@ public:
             for (int j = 1; j < gray.height - 1; ++j) {
                 int gx = 0, gy = 0;
 
-                // تدرج أفقي (difference in x)
+
                 gx = abs(gray(i+1, j, 0) - gray(i-1, j, 0));
 
-                // تدرج رأسي (difference in y)
                 gy = abs(gray(i, j+1, 0) - gray(i, j-1, 0));
 
-                int edgeVal = min(255, gx + gy); // إجمالي الفرق
+                int edgeVal = min(255, gx + gy);
                 for (int c = 0; c < gray.channels; ++c)
                     edges(i, j, c) = edgeVal;
             }
@@ -254,9 +277,10 @@ int main() {
         "7. Rotate image",
         "8.Change Brightness",
         "9. Crop image",
-        "10. Detect Edges",
-        "11.Resize image",
-        "12. Exit"
+        "10. Add frame",
+        "11. Detect Edges",
+        "12.Resize image",
+        "13. Exit"
     };
 
     int choice;
@@ -266,7 +290,7 @@ int main() {
         cout << "Choose a filter number: ";
         cin >> choice;
 
-        if (choice == 12) { // Exit
+        if (choice == 13) { // Exit
             cout << "Exiting...\n";
             break;
         }
@@ -298,11 +322,12 @@ int main() {
                 (x == 1) ? p.ChangeBrightness(-127) : p.ChangeBrightness(127);
             }
             case 9:p.cropImage();break;
-            case 10: p.detectEdges(); break;
+            case 10:p.addFrame(10,"normal");break;
+            case 11: p.detectEdges(); break;
             default:
                 cout << "Invalid choice\n";
                 continue;
-            case 11:p.resizeImage();break;
+            case 12:p.resizeImage();break;
         }
 
         string outFile;
