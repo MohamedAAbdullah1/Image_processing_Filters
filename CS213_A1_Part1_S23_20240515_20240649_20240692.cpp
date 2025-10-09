@@ -204,33 +204,18 @@ public:
 
     // Filter #10
     void detectEdges() {
-        Image gray = image;
-        for (int i = 0; i < gray.width; ++i) {
-            for (int j = 0; j < gray.height; ++j) {
-                unsigned int avg = 0;
-                for (int k = 0; k < gray.channels; ++k)
-                    avg += gray(i, j, k);
-                avg /= gray.channels;
-                for (int k = 0; k < gray.channels; ++k)
-                    gray(i, j, k) = avg;
-            }
-        }
-        Image edges(gray.width, gray.height);
-        for (int i = 1; i < gray.width - 1; ++i) {
-            for (int j = 1; j < gray.height - 1; ++j) {
+        convertToGrayscale();
+        Image edges(image.width, image.height);
+        for (int i = 1; i < image.width - 1; ++i) {
+            for (int j = 1; j < image.height - 1; ++j) {
                 int gx = 0, gy = 0;
-
-
-                gx = abs(gray(i+1, j, 0) - gray(i-1, j, 0));
-
-                gy = abs(gray(i, j+1, 0) - gray(i, j-1, 0));
-
+                gx = abs(image(i+1, j, 0) - image(i-1, j, 0));
+                gy = abs(image(i, j+1, 0) - image(i, j-1, 0));
                 int edgeVal = min(255, gx + gy);
-                for (int c = 0; c < gray.channels; ++c)
-                    edges(i, j, c) = edgeVal;
+                for (int k = 0; k < image.channels; ++k)
+                    edges(i, j, k) = 255 - edgeVal;
             }
         }
-
         image = edges;
     }
     // Filter #11 — Resize image
@@ -303,16 +288,14 @@ int main() {
         "2. Convert to black & white",
         "3. Invert colors",
         "4. Merge images",
-        "5. Flip vertically",
-        "6. Flip horizontally",
-        "7. Rotate image",
-        "8.Change Brightness",
-        "9. Crop image",
-        "10. Add frame",
-        "11. Detect Edges",
-        "12.Resize image",
-        "13.blur image",
-        "14. Exit"
+        "5. Flip",
+        "6. Rotate image",
+        "7.Change Brightness",
+        "8. Crop image",
+        "9. Add frame",
+        "10. Detect Edges",
+        "11.Resize image",
+        "13. Exit"
     };
 
     int choice;
@@ -322,7 +305,7 @@ int main() {
         cout << "Choose a filter number: ";
         cin >> choice;
 
-        if (choice == 14) { // Exit
+        if (choice == 13) {
             cout << "Exiting...\n";
             break;
         }
@@ -338,29 +321,43 @@ int main() {
                 p.mergeImages(secImage);
                 break;
             }
-            case 5: p.flipVertical(); break;
-            case 6: p.flipHorizontal(); break;
-            case 7: {
+            case 5: {
+                cout << "1.Flip vertically\n2.Flip horizontally\nEnter the type: ";
+                int x;cin >> x;
+
+                (x == 1) ? p.flipVertical() : p.flipHorizontal();
+                break;
+            }
+            case 6: {
                 int angle;
                 cout << "Enter rotation angle (90, 180, 270): ";
                 cin >> angle;
                 p.rotate(angle);
                 break;
             }
-            case 8: {
+            case 7: {
                 int x;
                 cout << "1.darker\n2.lighter";
                 cin >> x;
                 (x == 1) ? p.ChangeBrightness(-127) : p.ChangeBrightness(127);
             }
-            case 9:p.cropImage();break;
-            case 10:p.addFrame(10,"normal");break;
-            case 11: p.detectEdges(); break;
+            case 8:p.cropImage();break;
+            case 9:{
+                cout << "Enter the thickness:";int x;cin >> x;
+                cout << "1.Normal\n2.decorative\nEnter the type: ";
+                int y;cin >> y;
+                if (y == 1) {
+                    int r, g, b;cin >> r >> g >> b;
+                    p.addFrame(x,"normal",r,g,b);
+                }else
+                    p.addFrame(x,"decorative");
+                break;
+            }
+            case 10: p.detectEdges(); break;
             default:
                 cout << "Invalid choice\n";
                 continue;
-            case 12:p.resizeImage();break;
-            case 13:p.blurimages();break;
+            case 11:p.resizeImage();break;
         }
 
         string outFile;
