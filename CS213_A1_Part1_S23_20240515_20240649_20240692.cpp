@@ -4,7 +4,7 @@
 ---------------------------------------------------------------------------
   20240515    | Mohamed Abdullah Abdul-Hafez | 1 - 4 - 7 - 10 | All-B
   20240649    | Hisham Mohamed Fathy         | 2 - 5 - 8 - 11 | 35
-  20240692    | Youssef Sayed Ali            | 3 - 6 - 9      | 25
+  20240692    | Youssef Sayed Ali            | 3 - 6 - 9 - 12 | 25
 ============================================================================
 */
 
@@ -235,7 +235,38 @@ public:
         }
         image = resized;
     }
+    // Filter #13
+    void blurimages() {
+        int blockSize;
+        cin>>blockSize;
+        for (int y = 0; y < image.height; y += blockSize) {
+            for (int x = 0; x < image.width; x += blockSize) {
+                int rSum = 0, gSum = 0, bSum = 0;
+                int count = 0;
 
+                for (int j = y; j < y + blockSize && j < image.height; j++) {
+                    for (int i = x; i < x + blockSize && i < image.width; i++) {
+                        rSum += image(i, j, 0);
+                        gSum += image(i, j, 1);
+                        bSum += image(i, j, 2);
+                        count++;
+                    }
+                }
+
+                int rAvg = rSum / count;
+                int gAvg = gSum / count;
+                int bAvg = bSum / count;
+
+                for (int j = y; j < y + blockSize && j < image.height; j++) {
+                    for (int i = x; i < x + blockSize && i < image.width; i++) {
+                        image(i, j, 0) = rAvg;
+                        image(i, j, 1) = gAvg;
+                        image(i, j, 2) = bAvg;
+                    }
+                }
+            }
+        }
+    }
     void saveImage(const string &outName) {
         image.saveImage(outName);
     }
