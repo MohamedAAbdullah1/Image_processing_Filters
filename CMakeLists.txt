@@ -5,4 +5,5 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_executable(untitled
         "CS213_A1_Part1_S23_20240515_20240649_20240692.cpp .cpp"
+        Image_Class.cpp
 )
