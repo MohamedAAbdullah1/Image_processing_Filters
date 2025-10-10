@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include "Image_Class.h"
+#include <cstdlib>
 
 using namespace std;
 
@@ -222,9 +223,7 @@ public:
         image = resized;
     }
     // Filter #12
-    void blurimages() {
-        int blockSize;
-        cin>>blockSize;
+    void blurImages(int blockSize) {
         for (int y = 0; y < image.height; y += blockSize) {
             for (int x = 0; x < image.width; x += blockSize) {
                 int rSum = 0, gSum = 0, bSum = 0;
@@ -261,13 +260,18 @@ private:
     Image image;
 };
 
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
 
 int main() {
     string inputFile;
     cout << "Enter photo name: ";
     cin >> inputFile;
-
-    ImageProcessor p(inputFile);
 
     vector<string> menu{
         "1. Convert to grayscale",
@@ -276,19 +280,22 @@ int main() {
         "4. Merge images",
         "5. Flip",
         "6. Rotate image",
-        "7.Change Brightness",
+        "7. Change Brightness",
         "8. Crop image",
         "9. Add frame",
         "10. Detect Edges",
-        "11.Resize image",
-        "12.blur image",
+        "11. Resize image",
+        "12. Blur image",
         "13. Exit"
     };
 
     int choice;
     while (true) {
-        cout << "\n===== MENU =====\n";
-        for (auto &option : menu) cout << option << "\n";
+        clearScreen();  
+
+        cout << "===== MENU =====\n";
+        for (auto &option : menu)
+            cout << option << "\n";
         cout << "Choose a filter number: ";
         cin >> choice;
 
@@ -297,60 +304,70 @@ int main() {
             break;
         }
 
+        ImageProcessor imageProcessor(inputFile);
+
         switch (choice) {
-            case 1: p.convertToGrayscale(); break;
-            case 2: p.convertToBlackWhite(); break;
-            case 3: p.invertColors(); break;
+            case 1: imageProcessor.convertToGrayscale(); break;
+            case 2: imageProcessor.convertToBlackWhite(); break;
+            case 3: imageProcessor.invertColors(); break;
             case 4: {
                 string secImage;
                 cout << "Enter the name of the second image: ";
                 cin >> secImage;
-                p.mergeImages(secImage);
+                imageProcessor.mergeImages(secImage);
                 break;
             }
             case 5: {
-                cout << "1.Flip vertically\n2.Flip horizontally\nEnter the type: ";
-                int x;cin >> x;
-
-                (x == 1) ? p.flipVertical() : p.flipHorizontal();
+                cout << "1. Flip vertically\n2. Flip horizontally\nEnter the type: ";
+                int x; cin >> x;
+                (x == 1) ? imageProcessor.flipVertical() : imageProcessor.flipHorizontal();
                 break;
             }
             case 6: {
                 int angle;
                 cout << "Enter rotation angle (90, 180, 270): ";
                 cin >> angle;
-                p.rotate(angle);
+                imageProcessor.rotate(angle);
                 break;
             }
             case 7: {
                 int x;
-                cout << "1.darker\n2.lighter";
+                cout << "1. Darker\n2. Lighter\nEnter your choice: ";
                 cin >> x;
-                (x == 1) ? p.ChangeBrightness(-127) : p.ChangeBrightness(127);
-            }
-            case 8:p.cropImage();break;
-            case 9:{
-                cout << "Enter the thickness:";int x;cin >> x;
-                cout<<"Enter the color: ";
-                int r, g, b;cin >> r >> g >> b;
-                p.addFrame(x,r,g,b);
+                (x == 1) ? imageProcessor.ChangeBrightness(-127) : imageProcessor.ChangeBrightness(127);
                 break;
             }
-            case 10: p.detectEdges(); break;
-            case 11: p.resizeImage();break;
-            case 12: p.blurimages(); break;
+            case 8: imageProcessor.cropImage(); break;
+            case 9: {
+                cout << "Enter the thickness: ";
+                int x; cin >> x;
+                cout << "Enter the color (R G B): ";
+                int r, g, b; cin >> r >> g >> b;
+                imageProcessor.addFrame(x, r, g, b);
+                break;
+            }
+            case 10: imageProcessor.detectEdges(); break;
+            case 11: imageProcessor.resizeImage(); break;
+            case 12: {
+                cout << "Enter blur block size: ";
+                int x; cin >> x;
+                imageProcessor.blurImages(x);
+                break;
+            }
             default:
                 cout << "Invalid choice\n";
                 continue;
-
         }
 
         string outFile;
         cout << "Enter output file name: ";
         cin >> outFile;
-        p.saveImage(outFile);
+        imageProcessor.saveImage(outFile);
 
         cout << "\n--- Done! ---\n";
+        cout << "Press Enter to return to the menu...";
+        cin.ignore();
+        cin.get();
     }
 
     return 0;
