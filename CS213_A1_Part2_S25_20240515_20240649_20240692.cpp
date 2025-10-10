@@ -6,6 +6,9 @@
   20240649    | Hisham Mohamed Fathy         | 2 - 5 - 8 - 11 | 35
   20240692    | Youssef Sayed Ali            | 3 - 6 - 9 - 12 | 25
 ============================================================================
+
+Video link :https://drive.google.com/drive/folders/1RpZ89npyoYfvWluPsAlo0IsJ0KQbBFD2?usp=sharing
+Github link:https://github.com/MohamedAAbdullah1/Image_processing_Filters
 */
 
 #include <iostream>
@@ -291,7 +294,7 @@ int main() {
 
     int choice;
     while (true) {
-        clearScreen();  
+        clearScreen();
 
         cout << "===== MENU =====\n";
         for (auto &option : menu)
